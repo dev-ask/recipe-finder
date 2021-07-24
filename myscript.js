@@ -10,6 +10,7 @@ function getRecipe(input){
     })
     .then(data=>{
         displayRecipe(data);
+        console.log(data);
     })
 }
 
@@ -28,13 +29,31 @@ function displayRecipe(data){
     heading.innerHTML = recipeName;
     recipeDiv.appendChild(heading);
 
-    // Making space between
-    const lineBreak = document.createElement("br");
-    recipeDiv.appendChild(lineBreak);
-
     // Displaying recipe image
     const recipeImg = document.createElement("img");
     recipeImg.src = data.results[0].image;
-    recipeImg.width = 200;
     recipeDiv.appendChild(recipeImg);
+
+    getRecipeSource(data.results[0].id);
+}
+
+/**
+ * This function gets source of a recipe then links it
+ * 
+ * @param {number} id This number is unique to each recipe
+ */
+function getRecipeSource(id){
+    fetch("https://api.spoonacular.com/recipes/"+id+"/information?apiKey=abba883b13e44d23aa2c90c48434b19c")
+    .then(response=>{
+        return response.json();
+    })
+    .then(data=>{
+        const recipeSource = data.sourceUrl;
+        const sourceLink = document.createElement("a");
+        var link = document.createTextNode("View Recipe");
+        sourceLink.appendChild(link);
+        sourceLink.href = recipeSource;
+        sourceLink.setAttribute('target', '_blank');
+        document.querySelector(".box-6").appendChild(sourceLink);
+    })
 }
