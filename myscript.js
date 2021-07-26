@@ -1,68 +1,64 @@
 /**
- * Getting response from API based on user input
+ * Getting recipe ID in response from API based on user input
  * 
  * @param {string} input This is the user input from the search box
  */
-function getRecipe(input){
+function getRecipeNumber(input){
     fetch("https://api.spoonacular.com/recipes/complexSearch?apiKey=abba883b13e44d23aa2c90c48434b19c&query="+input+"&number=2")
     .then(response=>{
         return response.json();
     })
     .then(data=>{
-        displayRecipe(data);
-        console.log(data);
+        getRecipeData(data);
     })
 }
 
 /**
- * function displayRecipe()
- * Displays the recipe name and its image
+ * Extracting recipe details using its ID
  * 
- * @param {*} data The response we got when user searched for a recipe
+ * @param {*} recipeNumber JSON formatted data containing recipe ID for use
  */
- function displayRecipe(data){
-    // Locating container for output
-    const recipeGrid = document.querySelector(".box-5");
-    const recipeCard = document.createElement("div");
+function getRecipeData(recipeNumber){
+    document.querySelector(".box-5").innerHTML = ""; // clear old results
+    for(var keys in recipeNumber.results){
+        fetch("https://api.spoonacular.com/recipes/"+recipeNumber.results[keys].id+"/information?apiKey=abba883b13e44d23aa2c90c48434b19c")
+        .then(response=>{
+            return response.json();
+        })
+        .then(data=>{
+            renderRecipe(data);
+        })
+    }
+}
+
+/**
+ * Renders the API data on a recipe
+ * 
+ * @param {*} recipeData JSON formatted data containing detailed recipe info
+ */
+function renderRecipe(recipeData){
+    
+    // Locating output container
+    recipeGrid = document.querySelector(".box-5");
+    recipeCard = document.createElement("div");
     recipeCard.classList = "box-6";
 
     // Creating elements
-    const recipeName = document.createElement("h2");
-    const recipeImg = document.createElement("img");
-    const viewBtn = document.createElement("a");
-    var btnText = document.createTextNode("View Recipe");
+    recipeName = document.createElement("h2");
+    recipeImg = document.createElement("img");
+    viewBtn = document.createElement("a");
+    btnText = document.createTextNode("View Recipe");
     viewBtn.appendChild(btnText);
     
-    // Feeding API response to elements
-    recipeName.innerHTML = data.results[0].title; 
-    recipeImg.src = data.results[0].image;
-    
-    // Pushing elements into one div
+    // Feeding API data
+    recipeName.innerHTML = recipeData.title;
+    recipeImg.src = recipeData.image;
+    viewBtn.href = recipeData.sourceUrl;
+    viewBtn.setAttribute('target', '_blank');
+
+    // Appending elements to the output container
     recipeCard.appendChild(recipeName);
     recipeCard.appendChild(recipeImg);
     recipeCard.appendChild(viewBtn);
     recipeGrid.appendChild(recipeCard);
 }
-
-/**
- * This function gets source of a recipe then links it
- * 
- * @param {number} id This number is unique to each recipe
- */
-// function getRecipeSource(id){
-//     fetch("https://api.spoonacular.com/recipes/"+id+"/information?apiKey=abba883b13e44d23aa2c90c48434b19c")
-//     .then(response=>{
-//         return response.json();
-//     })
-//     .then(data=>{
-//         console.log(data);
-//         const recipeSource = data.sourceUrl;
-//         const sourceLink = document.createElement("a");
-//         var link = document.createTextNode("View Recipe");
-//         sourceLink.appendChild(link);
-//         sourceLink.href = recipeSource;
-//         sourceLink.setAttribute('target', '_blank');
-//         document.querySelector(".box-6").appendChild(sourceLink);
-//     })
-// }
-
