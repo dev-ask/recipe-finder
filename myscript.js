@@ -4,7 +4,7 @@
  * @param {string} input This is the user input from the search box
  */
 function getRecipeNumber(input){
-    fetch("https://api.spoonacular.com/recipes/complexSearch?apiKey=abba883b13e44d23aa2c90c48434b19c&query="+input+"&number=2")
+    fetch("https://api.spoonacular.com/recipes/complexSearch?apiKey=abba883b13e44d23aa2c90c48434b19c&query="+input+"&number=4")
     .then(response=>{
         return response.json();
     })
